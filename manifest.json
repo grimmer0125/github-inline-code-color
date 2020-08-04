@@ -1,0 +1,23 @@
+{
+  "manifest_version": 2,
+  "name": "Change GitHub inline code color",
+  "description": "Change GitHub inline code to better color",
+  "version": "1.0",
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "browser_action": {
+    "default_title": "GitHub-InlineCode-Color",
+    "default_popup": "popup.html"
+  },
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": ["https://github.com/*"],
+      "run_at": "document_end",
+      "js": ["contentScript.js"]
+    }
+  ]
+}

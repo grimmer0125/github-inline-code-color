@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<!--
+ This page is shown when the extension button is clicked, because the
+ "browser_action" field in manifest.json contains the "default_popup" key with
+ value "popup.html".
+ -->
+<html>
+  <head>
+    <style type="text/css">
+      body {
+        margin: 10px;
+        white-space: nowrap;
+      }
+
+      h1 {
+        font-size: 15px;
+      }
+
+      #container {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+      }
+    </style>
+
+    <!--
+      - JavaScript and HTML must be in separate files: see our Content Security
+      - Policy documentation[1] for details and explanation.
+      -
+      - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
+    -->
+    <script src="popup.js"></script>
+  </head>
+  <body>
+    <div id="container">
+      <input
+        id="newColorInput"
+        type="text"
+        name="lname"
+        placeholder="#DA5C44/61,11,58/red"
+      />
+      <button id="apployNewColorBtn">apply</button>
+    </div>
+    <div id="container">
+      <div>
+        <label>current color:</label>
+        <label id="currentColorLabel">#DA5C44</label>
+      </div>
+      <div>
+        <button id="resetButton">reset</button>
+      </div>
+    </div>
+    <label id="colorMsg"></label>
+  </body>
+</html>
