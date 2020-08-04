@@ -12,7 +12,7 @@ function setColor(newColor) {
 
 document.addEventListener("DOMContentLoaded", () => {
   chrome.storage.sync.get(["currentColor"], (result) => {
-    if (result.currentColor) {
+    if (result.currentColor && result.currentColor !== NEW_DEFAULT_COLOR) {
       currentColorLabel.textContent = result.currentColor;
     } else {
       currentColorLabel.textContent = "Notion style";
@@ -40,6 +40,17 @@ document.addEventListener("DOMContentLoaded", () => {
   resetButton.addEventListener("click", () => {
     console.log("reset button click");
     setColor(NEW_DEFAULT_COLOR);
+  });
+
+  const dropdown = document.getElementById("dropdown");
+  chrome.storage.sync.get(["visibility"], (result) => {
+    if (result.visibility) {
+      dropdown.value = result.visibility;
+    }
+  });
+
+  dropdown.addEventListener("change", () => {
+    chrome.storage.sync.set({ visibility: dropdown.value }, () => {});
   });
 });
 

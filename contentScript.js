@@ -2,15 +2,18 @@
 // Notion: 218 97 92 = "#DA5C44
 const NEW_DEFAULT_COLOR = "#DA5C44";
 
-chrome.storage.sync.get(["currentColor"], (result) => {
-  if (result.currentColor) {
-    if (result.currentColor.indexOf(",") > -1) {
-      changeColor(`rgb(${result.currentColor})`);
+chrome.storage.sync.get(["currentColor", "visibility"], (result) => {
+  console.log("result:", result);
+  if (!result.visibility || result.visibility === "enable") {
+    if (result.currentColor) {
+      if (result.currentColor.indexOf(",") > -1) {
+        changeColor(`rgb(${result.currentColor})`);
+      } else {
+        changeColor(result.currentColor);
+      }
     } else {
-      changeColor(result.currentColor);
+      changeColor(NEW_DEFAULT_COLOR);
     }
-  } else {
-    changeColor(NEW_DEFAULT_COLOR);
   }
 });
 
