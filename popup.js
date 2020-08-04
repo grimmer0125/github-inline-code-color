@@ -1,45 +1,52 @@
-const NEW_DEFAULT_COLOR = "#DA5C44";
+const DEFAULT_NOTION_COLOR = "#DA5C44";
+
+function notifyContentChangeColor(color, visibility) {
+  chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
+    var activeTab = tabs[0];
+    chrome.tabs.sendMessage(activeTab.id, {
+      message: "changeColor",
+      visibility,
+      color,
+    });
+  });
+}
 
 function setColor(newColor) {
   chrome.storage.sync.set({ currentColor: newColor }, () => {});
-  if (newColor !== NEW_DEFAULT_COLOR) {
+  if (newColor !== DEFAULT_NOTION_COLOR) {
     currentColorLabel.textContent = newColor;
   } else {
     currentColorLabel.textContent = "Notion style";
   }
   colorMsg.textContent = "ok";
+  notifyContentChangeColor(newColor);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   chrome.storage.sync.get(["currentColor"], (result) => {
-    if (result.currentColor && result.currentColor !== NEW_DEFAULT_COLOR) {
+    if (result.currentColor && result.currentColor !== DEFAULT_NOTION_COLOR) {
       currentColorLabel.textContent = result.currentColor;
     } else {
       currentColorLabel.textContent = "Notion style";
     }
   });
 
-  function updateInput(e) {
-    console.log("update input:", e.target.value);
-  }
-
-  newColorInput.addEventListener("input", updateInput);
+  // function updateInput(e) {
+  //   console.log("update input:", e.target.value);
+  // }
+  // newColorInput.addEventListener("input", updateInput);
 
   apployNewColorBtn.addEventListener("click", () => {
     const newColor = newColorInput.value;
-    console.log("apply new color button click:", newColor);
     if (checkValidColor(newColor)) {
-      console.log("valid");
       setColor(newColor);
     } else {
-      console.log("invalid:", newColor);
       colorMsg.textContent = "invalid";
     }
   });
 
   resetButton.addEventListener("click", () => {
-    console.log("reset button click");
-    setColor(NEW_DEFAULT_COLOR);
+    setColor(DEFAULT_NOTION_COLOR);
   });
 
   const dropdown = document.getElementById("dropdown");
@@ -51,6 +58,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   dropdown.addEventListener("change", () => {
     chrome.storage.sync.set({ visibility: dropdown.value }, () => {});
+    let color = currentColorLabel.textContent;
+    if (color === "Notion style") {
+      color = DEFAULT_NOTION_COLOR;
+    }
+    notifyContentChangeColor(color, dropdown.value);
   });
 });
 

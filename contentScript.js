@@ -2,19 +2,41 @@
 // Notion: 218 97 92 = "#DA5C44
 const NEW_DEFAULT_COLOR = "#DA5C44";
 
-chrome.storage.sync.get(["currentColor", "visibility"], (result) => {
-  console.log("result:", result);
-  if (!result.visibility || result.visibility === "enable") {
-    if (result.currentColor) {
-      if (result.currentColor.indexOf(",") > -1) {
-        changeColor(`rgb(${result.currentColor})`);
+// function start() {
+//   alert("started");
+// }
+
+function changeColorByVisibility(visibility, color) {
+  if (!visibility || visibility === "enable") {
+    if (color) {
+      if (color.indexOf(",") > -1) {
+        changeColor(`rgb(${color})`);
       } else {
-        changeColor(result.currentColor);
+        changeColor(color);
       }
     } else {
       changeColor(NEW_DEFAULT_COLOR);
     }
+  } else {
+    changeColor("");
   }
+}
+
+chrome.storage.sync.get(["currentColor", "visibility"], (result) => {
+  const { visibility, currentColor } = result;
+  if (!visibility || visibility === "enable") {
+    changeColorByVisibility(visibility, currentColor);
+  }
+  chrome.runtime.onMessage.addListener(function (
+    request,
+    sender,
+    sendResponse
+  ) {
+    if (request.message === "changeColor") {
+      const { visibility, color } = request;
+      changeColorByVisibility(visibility, color);
+    }
+  });
 });
 
 function changeColor(colorStr) {
