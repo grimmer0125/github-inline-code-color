@@ -16,7 +16,7 @@
         font-size: 15px;
       }
 
-      #container {
+      .container {
         align-items: center;
         display: flex;
         justify-content: space-between;
@@ -32,30 +32,46 @@
     <script src="popup.js"></script>
   </head>
   <body>
-    <div id="container">
+    <div class="container">
       <input
         id="newColorInput"
         type="text"
-        name="lname"
         placeholder="#DA5C44/61,11,58/red"
       />
       <button id="apployNewColorBtn">apply</button>
     </div>
-    <div id="container">
+    <div class="container">
       <div>
-        <label>current color:</label>
+        <label>Color:</label>
         <label id="currentColorLabel">#DA5C44</label>
       </div>
       <div>
         <button id="resetButton">reset</button>
       </div>
     </div>
+    <div class="container">
+      <input
+        id="newBGColorInput"
+        type="text"
+        placeholder="#DA5C44/61,11,58/red"
+      />
+      <button id="apployNewBGColorBtn">apply</button>
+    </div>
+    <div class="container">
+      <div>
+        <label>Background color:</label>
+        <label id="currentBGColorLabel">#F3F4F4</label>
+      </div>
+      <div>
+        <button id="resetBGButton">reset</button>
+      </div>
+    </div>
     <div>
       <label id="colorMsg"></label>
     </div>
-    <div id="container">
+    <div class="container">
       <span>Switch</span>
-      <select id="dropdown">
+      <select id="onOffDropdown">
         <option value="enable" selected>enable</option>
         <option value="disable">disable</option>
       </select>

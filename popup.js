@@ -1,12 +1,14 @@
 const DEFAULT_NOTION_COLOR = "#DA5C44";
+const ORIGINAL_BG_COLOR = "#F3F4F4";
 
-function notifyContentChangeColor(color, visibility) {
+function notifyContentChangeColor(color, bgColor, visibility) {
   chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
     var activeTab = tabs[0];
     chrome.tabs.sendMessage(activeTab.id, {
       message: "changeColor",
-      visibility,
       color,
+      bgColor,
+      visibility,
     });
   });
 }
@@ -19,7 +21,33 @@ function setColor(newColor) {
     currentColorLabel.textContent = "Notion style";
   }
   colorMsg.textContent = "ok";
-  notifyContentChangeColor(newColor);
+
+  let bgColor;
+  if (currentBGColorLabel.textContent !== "Original GitHub style") {
+    bgColor = currentBGColorLabel.textContent;
+  } else {
+    bgColor = ORIGINAL_BG_COLOR;
+  }
+  notifyContentChangeColor(newColor, bgColor, onOffDropdown.value);
+}
+
+// TODO: change later
+function setBGColor(newColor) {
+  chrome.storage.sync.set({ currentBGColor: newColor }, () => {});
+  if (newColor !== ORIGINAL_BG_COLOR) {
+    currentBGColorLabel.textContent = newColor;
+  } else {
+    currentBGColorLabel.textContent = "Original GitHub style";
+  }
+  colorMsg.textContent = "ok";
+
+  let color;
+  if (currentColorLabel.textContent !== "Notion style") {
+    color = currentColorLabel.textContent;
+  } else {
+    color = DEFAULT_NOTION_COLOR;
+  }
+  notifyContentChangeColor(color, newColor, onOffDropdown.value);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -30,39 +58,55 @@ document.addEventListener("DOMContentLoaded", () => {
       currentColorLabel.textContent = "Notion style";
     }
   });
-
-  // function updateInput(e) {
-  //   console.log("update input:", e.target.value);
-  // }
-  // newColorInput.addEventListener("input", updateInput);
+  chrome.storage.sync.get(["currentBGColor"], (result) => {
+    if (result.currentBGColor && result.currentBGColor !== ORIGINAL_BG_COLOR) {
+      currentBGColorLabel.textContent = result.currentBGColor;
+    } else {
+      currentBGColorLabel.textContent = "Original GitHub style";
+    }
+  });
 
   apployNewColorBtn.addEventListener("click", () => {
     const newColor = newColorInput.value;
     if (checkValidColor(newColor)) {
       setColor(newColor);
     } else {
-      colorMsg.textContent = "invalid";
+      colorMsg.textContent = "invalid Color";
+    }
+  });
+  apployNewBGColorBtn.addEventListener("click", () => {
+    const newBGColor = newBGColorInput.value;
+    if (checkValidColor(newBGColor)) {
+      setBGColor(newBGColor);
+    } else {
+      colorMsg.textContent = "invalid BG Color";
     }
   });
 
   resetButton.addEventListener("click", () => {
     setColor(DEFAULT_NOTION_COLOR);
   });
-
-  const dropdown = document.getElementById("dropdown");
-  chrome.storage.sync.get(["visibility"], (result) => {
-    if (result.visibility) {
-      dropdown.value = result.visibility;
-    }
+  resetBGButton.addEventListener("click", () => {
+    setBGColor(ORIGINAL_BG_COLOR);
   });
 
-  dropdown.addEventListener("change", () => {
-    chrome.storage.sync.set({ visibility: dropdown.value }, () => {});
+  const onOffDropdown = document.getElementById("onOffDropdown");
+  chrome.storage.sync.get(["visibility"], (result) => {
+    if (result.visibility) {
+      onOffDropdown.value = result.visibility;
+    }
+  });
+  onOffDropdown.addEventListener("change", () => {
+    chrome.storage.sync.set({ visibility: onOffDropdown.value }, () => {});
     let color = currentColorLabel.textContent;
     if (color === "Notion style") {
       color = DEFAULT_NOTION_COLOR;
     }
-    notifyContentChangeColor(color, dropdown.value);
+    let bgColor = currentBGColorLabel.textContent;
+    if (bgColor === "Original GitHub style") {
+      bgColor = ORIGINAL_BG_COLOR;
+    }
+    notifyContentChangeColor(color, bgColor, onOffDropdown.value);
   });
 });
 
