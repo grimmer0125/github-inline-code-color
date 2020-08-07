@@ -1,15 +1,15 @@
 {
   "manifest_version": 2,
-  "name": "Change GitHub inline code color",
+  "name": "GitHub inline code color editor",
   "description": "Change GitHub inline code color",
   "version": "1.0",
   "icons": {
-    "16": "icon16.png",
-    "48": "icon48.png",
-    "128": "icon128.png"
+    "16": "color_icn_16.png",
+    "48": "color_icn_48.png",
+    "128": "color_icn_128.png"
   },
   "browser_action": {
-    "default_title": "GitHub Inline Code Color",
+    "default_title": "GitHub inline code color editor",
     "default_popup": "popup.html"
   },
   "permissions": ["storage"],
